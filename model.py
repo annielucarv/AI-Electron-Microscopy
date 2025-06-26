@@ -166,7 +166,7 @@ class ResUNet(nn.Module):
         self.residual_conv_1 = ResidualConv(filters[0], filters[1], 2, 1)
         self.residual_conv_2 = ResidualConv(filters[1], filters[2], 2, 1)
 
-        self.bridge = ResidualConv(filters[2], filters[3], 2, 1)
+        self.bottleneck = ResidualConv(filters[2], filters[3], 2, 1)
 
         self.upsample_1 = Upsample(filters[3], filters[3], 2, 2)
         self.up_residual_conv1 = ResidualConv(filters[3] + filters[2], filters[2], 1, 1)
@@ -187,7 +187,7 @@ class ResUNet(nn.Module):
         x2 = self.residual_conv_1(x1)
         x3 = self.residual_conv_2(x2)
         # Bridge
-        x4 = self.bridge(x3)
+        x4 = self.bottleneck(x3)
         # Decode
         x4 = self.upsample_1(x4)
         x5 = torch.cat([x4, x3], dim=1)
